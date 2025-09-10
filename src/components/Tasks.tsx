@@ -15,7 +15,7 @@ let taskSchema = object({
     finished: boolean().default(false)
 })
 
-export default function TestingField(){
+export default function Task(){
     const [inputText, setInputText] = useState<string>('');
     const [message, setMessage] = useState<string>('');
     const url = 'http://localhost:3000/tasks'

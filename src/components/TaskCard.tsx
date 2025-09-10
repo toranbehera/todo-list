@@ -1,17 +1,41 @@
-export default function TaskCard({item, handleClick}: {item: string, handleClick: () => void}){
+interface Task {
+    id: string|undefined,
+    name: string,
+    finished: boolean|undefined
+}
+
+export default function TaskCard({item}: {item: Task}){
+    const url = 'http://localhost:3000/tasks';
+    
+    const deleteTask = async (index: string|undefined) => {
+            try{
+                const response = await fetch(`${url}/${index}`, {
+                    method: 'DELETE'
+                })
+                if(!response.ok){
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log(result);
+            } catch(error: any){
+                console.error(error.message);
+            }
+        }
+    
     return (
         <div className="flex justify-between items-center 
             shadow-xl rounded-lg bg-blue-400 text-white m-5 p-5"
         >
             <div className="flex gap-3">
                 <input type="checkbox" className="accent-black w-5"/>    
-                <p>{item}</p>   
+                <p>{item.name}</p>   
             </div>
             
             <div className="flex gap-5 p-3 items-center">
                 <button
                     className="hover:text-red-400"
-                    onClick={() => handleClick()}
+                    onClick={() => deleteTask(item.id)}
                 >
                    <svg                 
                         xmlns="http://www.w3.org/2000/svg"

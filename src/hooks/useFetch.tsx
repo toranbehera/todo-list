@@ -18,30 +18,9 @@ export default function useFetch<T>(url: string){
                 console.log(error.message);
                 setError(error.message);
             }
-            
         } 
-
+        
         fetchData();
-
-        // fetch(url)
-        //     .then(res => {
-        //         if (!res.ok) {
-        //             throw new Error(`Response status: ${res.status}`);
-        //         }
-        //         return res.json();
-        //     })
-        //     .then((data) => {
-        //         setData(data);
-        //         setError(null);
-        //     })
-        //     .catch(e => {
-        //         if (e.name === 'AbortError') {
-        //             console.log('fetch aborted');
-        //         } else {
-        //             setError(e.message);
-        //         }
-        //     });
-
     });
     return {data, error};
 }
