@@ -1,24 +1,26 @@
 import { useState, useEffect } from "react"
 import TestingCard from "./testingCard";
-import { Formik } from "formik";
+import { object, string, boolean } from 'yup';
 
 interface Task {
-    id: number,
-    title: string,
-    finished: boolean
+    id: string|undefined,
+    name: string,
+    finished: boolean|undefined
 }
+
+let taskSchema = object({
+    id: string().default(() => crypto.randomUUID()), 
+    name: string().required(),
+    finished: boolean().default(false)
+})
 
 export default function TestingField(){
     const [inputText, setInputText] = useState<string>('');
-    const [list, setList] = useState<string[]>([]);
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [message, setMessage] = useState<string>('');
     const url = 'http://localhost:3000/tasks'
 
-    const handleClick = (text: string) => {
-        setList([...list, text]);
-    }
-
-    const deleteTask = async (index: number) => {
+    const deleteTask = async (index: string) => {
         try{
             const response = await fetch(`${url}/${index}`, {
                 method: 'DELETE'
@@ -36,15 +38,24 @@ export default function TestingField(){
 
     const createTask = async (task: Task) => {
         try{
+            const validatedTask = await taskSchema.validate(task);
+
+            setMessage(`Task ${validatedTask.name} successfully created!`);
+            
             const response = await fetch(url, {
                 method: 'POST',
-                body: JSON.stringify(task)
+                body: JSON.stringify(validatedTask)
             })
             if(!response.ok){
                 throw new Error(`Response status: ${response.status}`);
             }
         } catch(error: any){
-            console.error(error.message)
+            
+            if(error.name === 'ValidationError'){
+                setMessage(error.errors);
+            }else{
+                console.error(error.message);
+            }
         }
     }
 
@@ -65,11 +76,11 @@ export default function TestingField(){
 
     useEffect(() => {
         fetchData(url);
-    })
+    }, [tasks])
 
     return (
         <div className="flex-col justify-self-center">
-            <div className="flex gap-4 hover:outline-1 outline-gray-400 p-5 m-5 shadow-lg">
+            <div className="flex justify-center w-fit gap-4 hover:outline-1 outline-gray-400 p-5 m-5 shadow-lg">
                 <input 
                     className="border-1 rounded-md p-2 shadow-xs"
                     onChange={(e) => setInputText(e.target.value)} 
@@ -87,17 +98,22 @@ export default function TestingField(){
                         rounded-lg 
                         text-white
                     "
-                    onClick={() => handleClick(inputText)}
+                    onClick={() => createTask({name: inputText, id: undefined, finished: false})}
                 >
                     Create Task
                 </button>
             </div>
+            {message && 
+                <div className="text-center">
+                    {message}
+                </div>
+            }
             <div>
-                {tasks.map(({id, title}) => (
-                    <div key={id}>
-                        <TestingCard item={title} index={id} handleClick={() => deleteTask(id)}/> 
-                    </div>
-                ))}   
+            {tasks.map(({id, name}) => (
+                <div key={id}>
+                    <TestingCard item={name} handleClick={() => deleteTask(`${id}`)}/> 
+                </div>
+            ))}   
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-export default function TestingCard({item, index, handleClick}: {item: string, index: number, handleClick: () => void}){
+export default function TestingCard({item, handleClick}: {item: string, handleClick: () => void}){
     return (
         <div className="flex justify-between items-center 
             shadow-xl rounded-lg bg-blue-400 text-white m-5 p-5"
@@ -9,7 +9,6 @@ export default function TestingCard({item, index, handleClick}: {item: string, i
             </div>
             
             <div className="flex gap-5 p-3 items-center">
-                <p style={{textOverflow:'hidden'}}>{index}</p>
                 <button
                     className="hover:text-red-400"
                     onClick={() => handleClick()}
