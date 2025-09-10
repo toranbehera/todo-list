@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react"
-import TestingCard from "./testingCard";
+import { useState } from "react"
+import TasksList from "./TasksList";
 import { object, string, boolean } from 'yup';
+import useFetch from "../hooks/useFetch";
 
 interface Task {
     id: string|undefined,
@@ -16,25 +17,8 @@ let taskSchema = object({
 
 export default function TestingField(){
     const [inputText, setInputText] = useState<string>('');
-    const [tasks, setTasks] = useState<Task[]>([]);
     const [message, setMessage] = useState<string>('');
     const url = 'http://localhost:3000/tasks'
-
-    const deleteTask = async (index: string) => {
-        try{
-            const response = await fetch(`${url}/${index}`, {
-                method: 'DELETE'
-            })
-            if(!response.ok){
-                throw new Error(`Response status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log(result);
-        } catch(error: any){
-            console.error(error.message);
-        }
-    }
 
     const createTask = async (task: Task) => {
         try{
@@ -59,24 +43,7 @@ export default function TestingField(){
         }
     }
 
-    const fetchData = async (url: string) => {
-        try{
-          const response = await fetch(url);  
-          if(!response.ok){
-            throw new Error(`Response status: ${response.status}`);
-          }
-
-          const result = await response.json();
-          console.log(result);
-          setTasks(result);
-        } catch (error: any) {
-            console.error(error.message);
-        }
-    }
-
-    useEffect(() => {
-        fetchData(url);
-    }, [tasks])
+    const {data: tasks} = useFetch<Task>(url);
 
     return (
         <div className="flex-col justify-self-center">
@@ -108,13 +75,7 @@ export default function TestingField(){
                     {message}
                 </div>
             }
-            <div>
-            {tasks.map(({id, name}) => (
-                <div key={id}>
-                    <TestingCard item={name} handleClick={() => deleteTask(`${id}`)}/> 
-                </div>
-            ))}   
-            </div>
+            <TasksList tasks={tasks}/>
         </div>
     )
 }

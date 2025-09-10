@@ -1,4 +1,4 @@
-import TestingField from "./components/testingField.tsx";
+import TestingField from "./components/Tasks.tsx";
 import'./App.css';
 
 function App() {

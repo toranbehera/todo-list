@@ -1,4 +1,4 @@
-export default function TestingCard({item, handleClick}: {item: string, handleClick: () => void}){
+export default function TaskCard({item, handleClick}: {item: string, handleClick: () => void}){
     return (
         <div className="flex justify-between items-center 
             shadow-xl rounded-lg bg-blue-400 text-white m-5 p-5"
