@@ -1,11 +1,11 @@
-import Task from "./components/Tasks.tsx";
+import Tasks from "./components/Tasks.tsx";
 import'./App.css';
 
 function App() {
 
   return (
     <>
-      <Task/>
+      <Tasks/>
     </>
   )
 }
