@@ -4,6 +4,8 @@ export default function useFetch<T>(url: string){
     const [data, setData] = useState<T[]>([]);
     const [error, setError] = useState(null);
 
+    
+
     const fetchData = async () => {
         try{
             const response = await fetch(url);

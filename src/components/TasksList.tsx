@@ -1,6 +1,6 @@
 import TaskCard from "./TaskCard";
 import { useContext } from "react";
-import { TasksContext } from "./Tasks";
+import { TasksContext } from "./TasksContext";
 
 interface Task {
     id: string,

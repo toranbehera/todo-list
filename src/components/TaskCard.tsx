@@ -1,5 +1,5 @@
 import { useContext, useState } from "react"
-import { TasksContext } from "./Tasks"
+import { TasksContext } from "./TasksContext"
 
 interface Task {
     id: string,
@@ -27,8 +27,15 @@ export default function TaskCard({item}: TaskCardProps){
         >
             <div className="flex gap-3">
                 <input type="checkbox" className="accent-black w-5" checked={isChecked} onChange={handleInput}/>    
-                <p>{item.name}</p>
-                <p>{`${item.finished}`}</p>    
+                <div>
+                    <input 
+                        className="text-lg outline-none" 
+                        value={item.name} 
+                        spellCheck={false}
+                    />
+                    <p className="text-s opacity-50">{item.finished ? "finished": "unfinished"}</p>     
+                </div>
+                
             </div>
             
             <div className="flex gap-5 p-3 items-center">
