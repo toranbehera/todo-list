@@ -1,26 +1,18 @@
-import { useState, useEffect } from "react";
 import TaskCard from "./TaskCard";
+import { useContext } from "react";
+import { TasksContext } from "./Tasks";
 
 interface Task {
-    id: string|undefined,
+    id: string,
     name: string,
-    finished: boolean|undefined
+    finished: boolean
 }
 
-interface TasksListProps {
-    tasks: Task[]
-}
-
-export default function TasksList({tasks}: TasksListProps){
-        const [t, setTasks] = useState(tasks);
-
-        useEffect(() => {
-            setTasks(tasks);
-        }, [tasks])
-
+export default function TasksList(){
+    const {tasks} = useContext(TasksContext);
     return (
         <div>
-            {t.map((task) => (
+            {tasks.map((task: Task) => (
                 <div key={task.id}>
                     <TaskCard item={task}/> 
                 </div>

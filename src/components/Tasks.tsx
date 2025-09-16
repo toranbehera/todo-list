@@ -1,12 +1,11 @@
-import { useState } from "react"
-import TasksList from "./TasksList";
+import { createContext, useState } from "react"
 import { object, string, boolean } from 'yup';
 import useFetch from "../hooks/useFetch";
 
 interface Task {
-    id: string|undefined,
+    id: string,
     name: string,
-    finished: boolean|undefined
+    finished: boolean
 }
 
 let taskSchema = object({
@@ -15,26 +14,32 @@ let taskSchema = object({
     finished: boolean().default(false)
 })
 
-export default function Task(){
+export const TasksContext = createContext<any>(null);
+
+export default function Task({children}: any){
     const [inputText, setInputText] = useState<string>('');
     const [message, setMessage] = useState<string>('');
-    const url = 'http://localhost:3000/tasks'
+    
+    const url = 'http://localhost:3000/tasks';
+
+    const {data: tasks, refetch} = useFetch<Task>(url);
 
     const createTask = async (task: Task) => {
         try{
-            const validatedTask = await taskSchema.validate(task);
-
+            const validatedTask = taskSchema.cast(task);
+            await taskSchema.validate(validatedTask);
             setMessage(`Task ${validatedTask.name} successfully created!`);
             
             const response = await fetch(url, {
                 method: 'POST',
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(validatedTask)
             })
             if(!response.ok){
                 throw new Error(`Response status: ${response.status}`);
             }
+            refetch();
         } catch(error: any){
-            
             if(error.name === 'ValidationError'){
                 setMessage(error.errors);
             }else{
@@ -43,7 +48,40 @@ export default function Task(){
         }
     }
 
-    const {data: tasks} = useFetch<Task>(url);
+    const deleteTask = async (index: string) => {
+        try{
+            const response = await fetch(`${url}/${index}`, {
+                method: 'DELETE'
+            })
+            if(!response.ok){
+                throw new Error(`Response status: ${response.status}`);
+            }
+            refetch();
+            const result = await response.json();
+            console.log(result);
+        } catch(error: any){
+            console.error(error.message);
+        }
+    }
+
+    const updateTask = async (index: string, newValue: boolean) => {
+        try{
+            const response = await fetch(`${url}/${index}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    'finished': newValue
+                })
+            });
+            if(!response.ok){
+                throw new Error(`Error: ${response.status}`);
+            }
+            refetch();
+            console.log('task successfully updated');
+        } catch(error){
+            console.error('Error updating task: ', error);
+        }
+    }
 
     return (
         <div className="flex-col justify-self-center">
@@ -65,7 +103,7 @@ export default function Task(){
                         rounded-lg 
                         text-white
                     "
-                    onClick={() => createTask({name: inputText, id: undefined, finished: false})}
+                    onClick={() => createTask({name: inputText} as Task)}
                 >
                     Create Task
                 </button>
@@ -75,7 +113,11 @@ export default function Task(){
                     {message}
                 </div>
             }
-            <TasksList tasks={tasks}/>
+
+            <TasksContext.Provider value={{tasks, deleteTask, updateTask}}>
+                {children}
+            </TasksContext.Provider>
         </div>
+
     )
 }

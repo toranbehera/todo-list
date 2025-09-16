@@ -1,41 +1,40 @@
+import { useContext, useState } from "react"
+import { TasksContext } from "./Tasks"
+
 interface Task {
-    id: string|undefined,
+    id: string,
     name: string,
-    finished: boolean|undefined
+    finished: boolean
 }
 
-export default function TaskCard({item}: {item: Task}){
-    const url = 'http://localhost:3000/tasks';
-    
-    const deleteTask = async (index: string|undefined) => {
-            try{
-                const response = await fetch(`${url}/${index}`, {
-                    method: 'DELETE'
-                })
-                if(!response.ok){
-                    throw new Error(`Response status: ${response.status}`);
-                }
+interface TaskCardProps {
+    item: Task,
+}
 
-                const result = await response.json();
-                console.log(result);
-            } catch(error: any){
-                console.error(error.message);
-            }
-        }
-    
+export default function TaskCard({item}: TaskCardProps){
+    const [isChecked, setIsChecked] = useState(item.finished);
+    const {deleteTask: handleClick, updateTask: handleChange} = useContext(TasksContext);
+
+    const handleInput = async () => {
+        const newValue = !isChecked;
+        setIsChecked(newValue);
+        handleChange(item.id, newValue);
+    }
+
     return (
         <div className="flex justify-between items-center 
             shadow-xl rounded-lg bg-blue-400 text-white m-5 p-5"
         >
             <div className="flex gap-3">
-                <input type="checkbox" className="accent-black w-5"/>    
-                <p>{item.name}</p>   
+                <input type="checkbox" className="accent-black w-5" checked={isChecked} onChange={handleInput}/>    
+                <p>{item.name}</p>
+                <p>{`${item.finished}`}</p>    
             </div>
             
             <div className="flex gap-5 p-3 items-center">
                 <button
                     className="hover:text-red-400"
-                    onClick={() => deleteTask(item.id)}
+                    onClick={() => handleClick(item.id)}
                 >
                    <svg                 
                         xmlns="http://www.w3.org/2000/svg"
