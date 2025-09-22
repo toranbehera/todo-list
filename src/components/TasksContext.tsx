@@ -1,5 +1,6 @@
-import { createContext } from "react"
+import { createContext, useCallback, useMemo, useState, type PropsWithChildren } from "react"
 import useFetch from "../hooks/useFetch";
+import { object, string, boolean } from "yup";
 
 interface Task {
     id: string,
@@ -7,68 +8,100 @@ interface Task {
     finished: boolean
 }
 
+let taskSchema = object({
+    id: string().default(() => crypto.randomUUID()), 
+    name: string().required(),
+    finished: boolean().default(false)
+})
+
 export const TasksContext = createContext<any>(null);
+export const ReducersContext = createContext<any>(null);
 
-export default function TasksProvider({children}: any){
+export default function TasksProvider({children}: PropsWithChildren){
     const url = 'http://localhost:3000/tasks';
-    const {data: tasks, refetch} = useFetch<Task>(url);
+    const {data, refetch} = useFetch<Task>(url);
+    const [count, setCount] = useState(0);
 
-    const createTask = async (task: Task) => {
-        try{        
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(task)
-            })
-            if(!response.ok){
-                throw new Error(`Response status: ${response.status}`);
-            }
-            refetch();
-        } catch(error: any){
-            console.error(`Error: ${error.message}`);
-        }
-    }
+    const tasks = useMemo(() => data, [data]);
 
-    const deleteTask = async (index: string) => {
-        try{
-            const response = await fetch(`${url}/${index}`, {
-                method: 'DELETE'
-            })
-            if(!response.ok){
-                throw new Error(`Response status: ${response.status}`);
+    const createTask = useCallback(
+        async (task: Task) => {
+            try {
+                const validatedTask = taskSchema.cast(task);
+                await taskSchema.validate(validatedTask);
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(validatedTask),
+                });
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);    
+                }
+                
+                refetch();
+                return `Task ${validatedTask.name} successfully created!`;
+            } catch (error: any) {
+                if(error.name === "ValidationError"){
+                    return error.message;
+                }
+                console.error(`Error: ${error.message}`);
             }
+        },
+        [url, refetch]
+    );
+
+    const deleteTask = useCallback(
+        async (id: string) => {
+        try {
+            const response = await fetch(`${url}/${id}`, { method: "DELETE" });
+            if (!response.ok) throw new Error(`Response status: ${response.status}`);
             refetch();
             const result = await response.json();
             console.log(result);
-        } catch(error: any){
+        } catch (error: any) {
             console.error(error.message);
         }
-    }
+        },
+        [url, refetch]
+    );
 
-    const updateTask = async (index: string, newValue: boolean) => {
-        try{
-            const response = await fetch(`${url}/${index}`, {
-                method: 'PATCH',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    'finished': newValue
-                })
+    const updateTask = useCallback(
+        async (id: string, finished: boolean) => {
+        try {
+            const response = await fetch(`${url}/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ finished }),
             });
-            if(!response.ok){
-                throw new Error(`Error: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Error: ${response.status}`);
             refetch();
-            console.log('task successfully updated');
-        } catch(error){
-            console.error('Error updating task: ', error);
+            console.log("Task updated");
+        } catch (error) {
+            console.error("Error updating task: ", error);
         }
-    }
+        },
+        [url, refetch]
+    );
+
+    const contextValue = useMemo(() => ({
+        tasks
+    }), [tasks]);
+
+    const contextReducers = useMemo(() => ({
+        createTask,
+        deleteTask,
+        updateTask,
+    }), [createTask, deleteTask, updateTask])
 
     return (
-        <TasksContext value={{tasks, createTask, deleteTask, updateTask}}>
-            <div className="flex-col justify-self-center">
-                {children}
-            </div>
-        </TasksContext>
+        <div className="flex-col justify-self-center">  
+            <button onClick={() => setCount(count + 1)}>{count}</button>
+            <ReducersContext value={contextReducers}>
+                <TasksContext value={contextValue}>
+                    {children}
+                </TasksContext>
+            </ReducersContext>
+        </div>
     )
 }

@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export default function useFetch<T>(url: string){
     const [data, setData] = useState<T[]>([]);
     const [error, setError] = useState(null);
 
-    
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try{
             const response = await fetch(url);
             if(!response.ok){
@@ -19,11 +17,12 @@ export default function useFetch<T>(url: string){
             console.log(error.message);
             setError(error.message);
         }
-    }; 
+    }, []); 
 
     useEffect(() => {
         fetchData();
-    }, []);
+        console.log('fetchData rerendered');
+    }, [fetchData]);
     
     return {data, error, refetch: fetchData};
 }

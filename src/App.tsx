@@ -1,18 +1,16 @@
-import Tasks from "./components/TasksContext.tsx";
-import TasksList from "./components/TasksList.tsx";
+import TasksProvider from "./components/TasksContext.tsx";
 import CreateTask from "./components/CreateTask.tsx";
+import TasksList from "./components/TasksList.tsx";
 import'./App.css';
 
 function App() {
-
   return (
-    <>
-      <Tasks>
-        <CreateTask/>
-        <TasksList/>
-      </Tasks>
-    </>
+    <TasksProvider>
+      <CreateTask/>
+      <TasksList/>
+    </TasksProvider>
   )
 }
+
 
 export default App

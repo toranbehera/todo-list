@@ -10,10 +10,12 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Navbar/>
-      <Routes>
+      <main className='mt-20'>
+        <Routes>
         <Route index element={<App/>}/>
         <Route path="login" element={<SignupForm/>}/>
       </Routes>
+      </main>
     </BrowserRouter>
   </StrictMode>,
 )

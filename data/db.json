@@ -2,23 +2,23 @@
   "tasks": [
     {
       "id": "bfc13d44-3f6d-4e91-bec3-62daf49a4e9c",
-      "finished": false,
+      "finished": true,
       "name": "Switch to Axios"
     },
     {
-      "id": "369214f7-82e3-4566-ae66-9c5e85b8236e",
-      "finished": false,
-      "name": "Integrate useMemo"
-    },
-    {
       "id": "347c2846-790d-431a-a27c-e8895e080a26",
-      "finished": false,
+      "finished": true,
       "name": "Use Redux"
     },
     {
       "id": "e43c4b29-301c-4d99-8eb9-b3c65d953e32",
       "finished": false,
       "name": "Use Formik"
+    },
+    {
+      "id": "3afc86a5-7cd8-4f7f-b5d1-5c24bcffa096",
+      "finished": false,
+      "name": "Implement i18next"
     }
   ]
 }

@@ -1,6 +1,5 @@
 import { useContext, useState } from "react"
-import { TasksContext } from "./TasksContext";
-import { object, string, boolean } from "yup";
+import { ReducersContext } from "./TasksContext";
 
 interface Task {
     id: string,
@@ -8,35 +7,18 @@ interface Task {
     finished: boolean
 }
 
-let taskSchema = object({
-    id: string().default(() => crypto.randomUUID()), 
-    name: string().required(),
-    finished: boolean().default(false)
-})
-
 export default function CreateTask(){
     const [inputText, setInputText] = useState<string>('');
     const [message, setMessage] = useState<string>('');
-    const {createTask} = useContext(TasksContext);
+    const {createTask} = useContext(ReducersContext);
 
     const handleClick = async (task: Task) => {
-        try{
-            const validatedTask = taskSchema.cast(task);
-            await taskSchema.validate(validatedTask);
-            setMessage(`Task ${validatedTask.name} successfully created!`);
-            createTask(validatedTask);
-        } catch(error: any){
-           if(error.name === 'ValidationError'){
-                setMessage(error.errors);
-            }else{
-                console.error(error.message);
-            }
-        }
+        setMessage(createTask(task));
     }
 
     return (
-        <>
-            <div className="flex justify-center w-fit gap-4 hover:outline-1 outline-gray-400 p-5 m-5 shadow-lg">
+        <div className="sticky top-20 pt-5 bg-white">
+            <div className="flex justify-center gap-4 hover:outline-1 outline-gray-400 p-5 shadow-lg ">
                 <input 
                     className="border-1 rounded-md p-2 shadow-xs"
                     onChange={(e) => setInputText(e.target.value)} 
@@ -64,7 +46,7 @@ export default function CreateTask(){
                     {message}
                 </div>
             }
-        </>
+        </div>
         
     )
 }

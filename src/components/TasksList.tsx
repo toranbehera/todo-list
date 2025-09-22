@@ -1,6 +1,6 @@
-import TaskCard from "./TaskCard";
 import { useContext } from "react";
 import { TasksContext } from "./TasksContext";
+import MemoizedCard from "./TaskCard";
 
 interface Task {
     id: string,
@@ -14,7 +14,7 @@ export default function TasksList(){
         <div>
             {tasks.map((task: Task) => (
                 <div key={task.id}>
-                    <TaskCard item={task}/> 
+                    <MemoizedCard item={task}/> 
                 </div>
             ))}   
         </div>

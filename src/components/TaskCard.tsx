@@ -1,5 +1,5 @@
-import { useContext, useState } from "react"
-import { TasksContext } from "./TasksContext"
+import { useContext, useState, memo } from "react"
+import { ReducersContext } from "./TasksContext"
 
 interface Task {
     id: string,
@@ -8,14 +8,14 @@ interface Task {
 }
 
 interface TaskCardProps {
-    item: Task,
+    item: Task
 }
 
-export default function TaskCard({item}: TaskCardProps){
+const MemoizedCard = memo(function TaskCard({item}: TaskCardProps){
     const [isChecked, setIsChecked] = useState(item.finished);
-    const {deleteTask: handleClick, updateTask: handleChange} = useContext(TasksContext);
+    const {deleteTask: handleClick, updateTask: handleChange} = useContext(ReducersContext);
 
-    const handleInput = async () => {
+    const handleInput = () => {
         const newValue = !isChecked;
         setIsChecked(newValue);
         handleChange(item.id, newValue);
@@ -32,6 +32,7 @@ export default function TaskCard({item}: TaskCardProps){
                         className="text-lg outline-none" 
                         value={item.name} 
                         spellCheck={false}
+                        readOnly
                     />
                     <p className="text-s opacity-50">{item.finished ? "finished": "unfinished"}</p>     
                 </div>
@@ -57,4 +58,10 @@ export default function TaskCard({item}: TaskCardProps){
             </div>
         </div>
     )
-}
+}, (prevProps, nextProps) => (
+    prevProps.item.id === nextProps.item.id &&
+    prevProps.item.name === nextProps.item.name &&
+    prevProps.item.finished === nextProps.item.finished
+));
+
+export default MemoizedCard;
