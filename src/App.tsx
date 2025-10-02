@@ -5,10 +5,13 @@ import'./App.css';
 
 function App() {
   return (
-    <TasksProvider>
-      <CreateTask/>
-      <TasksList/>
-    </TasksProvider>
+    <div className="flex justify-center">
+        <TasksProvider>
+        <CreateTask/>
+        <TasksList/>
+      </TasksProvider> 
+    </div>
+    
   )
 }
 

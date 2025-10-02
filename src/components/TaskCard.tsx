@@ -7,18 +7,14 @@ interface Task {
     finished: boolean
 }
 
-interface TaskCardProps {
-    item: Task
-}
-
-const MemoizedCard = memo(function TaskCard({item}: TaskCardProps){
-    const [isChecked, setIsChecked] = useState(item.finished);
+const MemoizedCard = memo(function TaskCard({id, name, finished}: Task){
+    const [isChecked, setIsChecked] = useState(finished);
     const {deleteTask: handleClick, updateTask: handleChange} = useContext(ReducersContext);
 
     const handleInput = () => {
         const newValue = !isChecked;
         setIsChecked(newValue);
-        handleChange(item.id, newValue);
+        handleChange(id, newValue);
     }
 
     return (
@@ -30,11 +26,11 @@ const MemoizedCard = memo(function TaskCard({item}: TaskCardProps){
                 <div>
                     <input 
                         className="text-lg outline-none" 
-                        value={item.name} 
+                        value={name} 
                         spellCheck={false}
                         readOnly
                     />
-                    <p className="text-s opacity-50">{item.finished ? "finished": "unfinished"}</p>     
+                    <p className="text-s opacity-50">{finished ? "finished": "unfinished"}</p>     
                 </div>
                 
             </div>
@@ -42,7 +38,7 @@ const MemoizedCard = memo(function TaskCard({item}: TaskCardProps){
             <div className="flex gap-5 p-3 items-center">
                 <button
                     className="hover:text-red-400"
-                    onClick={() => handleClick(item.id)}
+                    onClick={() => handleClick(id)}
                 >
                    <svg                 
                         xmlns="http://www.w3.org/2000/svg"
@@ -58,10 +54,6 @@ const MemoizedCard = memo(function TaskCard({item}: TaskCardProps){
             </div>
         </div>
     )
-}, (prevProps, nextProps) => (
-    prevProps.item.id === nextProps.item.id &&
-    prevProps.item.name === nextProps.item.name &&
-    prevProps.item.finished === nextProps.item.finished
-));
+});
 
 export default MemoizedCard;

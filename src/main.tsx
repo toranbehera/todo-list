@@ -5,17 +5,21 @@ import './index.css'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import SignupForm from './components/LoginPage.tsx'
 import Navbar from './components/Navbar.tsx'
+import { Provider } from "react-redux";
+import { store } from "./app/store.ts";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Navbar/>
-      <main className='mt-20'>
-        <Routes>
-        <Route index element={<App/>}/>
-        <Route path="login" element={<SignupForm/>}/>
-      </Routes>
-      </main>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Navbar/>
+        <main className='mt-20'>
+          <Routes>
+            <Route index element={<App/>}/> 
+            <Route path="login" element={<SignupForm/>}/>
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </Provider>
   </StrictMode>,
 )

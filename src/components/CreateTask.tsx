@@ -1,11 +1,7 @@
 import { useContext, useState } from "react"
 import { ReducersContext } from "./TasksContext";
-
-interface Task {
-    id: string,
-    name: string,
-    finished: boolean
-}
+import { useAppDispatch } from "../hooks/reduxHooks";
+import { type Task } from "../app/features/tasks/tasksSlice";
 
 export default function CreateTask(){
     const [inputText, setInputText] = useState<string>('');

@@ -12,9 +12,9 @@ export default function TasksList(){
     const {tasks} = useContext(TasksContext);
     return (
         <div>
-            {tasks.map((task: Task) => (
-                <div key={task.id}>
-                    <MemoizedCard item={task}/> 
+            {tasks.map(({id, name, finished}: Task) => (
+                <div key={id}>
+                    <MemoizedCard id={id} name={name} finished={finished}/> 
                 </div>
             ))}   
         </div>
