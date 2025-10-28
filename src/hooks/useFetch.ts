@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
 
 export default function useFetch<T>(url: string){
     const [data, setData] = useState<T[]>([]);
@@ -6,15 +7,9 @@ export default function useFetch<T>(url: string){
 
     const fetchData = useCallback(async () => {
         try{
-            const response = await fetch(url);
-            if(!response.ok){
-                throw new Error(`Response status: ${response.status}`);
-            } else{
-                const data = await response.json();
-                setData(data);
-            }
-        } catch(error: any) {
-            console.log(error.message);
+            const response = await axios.get(url);
+            setData(response.data);
+        } catch (error: any){
             setError(error.message);
         }
     }, []); 

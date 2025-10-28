@@ -4,6 +4,7 @@ import { useAppDispatch } from "./reduxHooks";
 import useFetch from "./useFetch";
 import { object, string, boolean } from "yup";
 import { nanoid } from "@reduxjs/toolkit";
+import axios from "axios";
 
 let taskSchema = object({
     id: string().default(() => nanoid()), 
@@ -24,15 +25,7 @@ export default function useTasks(){
                 try {
                     const cleanedTask = taskSchema.cast(task);
                     await taskSchema.validate(cleanedTask);
-    
-                    const response = await fetch(url, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(cleanedTask),
-                    });
-                    if (!response.ok) {
-                        throw new Error(`Response status: ${response.status}`);    
-                    }
+                    await axios.post(url, cleanedTask);
                     
                     dispatch(taskAdded(cleanedTask));
                     refetch();
@@ -50,30 +43,22 @@ export default function useTasks(){
         const deleteTask = useCallback(
             async (id: string) => {
             try {
-                const response = await fetch(`${url}/${id}`, { method: "DELETE" });
-                if (!response.ok) throw new Error(`Response status: ${response.status}`);
-    
+                await axios.delete(`${url}/${id}`);
+
                 dispatch(taskDeleted(id));
                 refetch();
-                const result = await response.json();
-                console.log(result);
             } catch (error: any) {
                 console.error(error.message);
             }
             },
-            [url]
+            [url, refetch]
         );
     
         const updateTask = useCallback(
             async (id: string, finished: boolean) => {
             try {
-                const response = await fetch(`${url}/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ finished }),
-                });
-                if (!response.ok) throw new Error(`Error: ${response.status}`);
-    
+                await axios.patch(`${url}/${id}`, {finished});
+
                 dispatch(taskUpdated({id, finished}))
                 refetch();
                 console.log("Task updated");

@@ -1,33 +1,18 @@
 {
   "tasks": [
     {
-      "id": "bfc13d44-3f6d-4e91-bec3-62daf49a4e9c",
-      "finished": true,
-      "name": "Switch to Axios"
-    },
-    {
-      "id": "347c2846-790d-431a-a27c-e8895e080a26",
-      "finished": true,
-      "name": "Use Redux"
-    },
-    {
-      "id": "e43c4b29-301c-4d99-8eb9-b3c65d953e32",
-      "finished": true,
-      "name": "Use Formik"
-    },
-    {
       "id": "3afc86a5-7cd8-4f7f-b5d1-5c24bcffa096",
       "finished": false,
       "name": "Implement i18next"
     },
     {
       "id": "3d4g04Vt_9Cdn1j4Vu81H",
-      "finished": true,
+      "finished": false,
       "name": "Unit test with Jest"
     },
     {
       "id": "9hIY4PS4_2gXG6xX5ofSO",
-      "finished": true,
+      "finished": false,
       "name": "Git bisect"
     }
   ]
