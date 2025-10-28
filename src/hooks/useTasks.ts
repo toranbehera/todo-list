@@ -22,21 +22,21 @@ export default function useTasks(){
         const createTask = useCallback(
             async (task: Task) => {
                 try {
-                    const validatedTask = taskSchema.cast(task);
-                    await taskSchema.validate(validatedTask);
+                    const cleanedTask = taskSchema.cast(task);
+                    await taskSchema.validate(cleanedTask);
     
                     const response = await fetch(url, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(validatedTask),
+                        body: JSON.stringify(cleanedTask),
                     });
                     if (!response.ok) {
                         throw new Error(`Response status: ${response.status}`);    
                     }
                     
-                    dispatch(taskAdded(validatedTask));
+                    dispatch(taskAdded(cleanedTask));
                     refetch();
-                    return `Task ${validatedTask.name} successfully created!`;
+                    return `Task ${cleanedTask.name} successfully created!`;
                 } catch (error: any) {
                     if(error.name === "ValidationError"){
                         return error.message;

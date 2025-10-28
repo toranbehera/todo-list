@@ -12,13 +12,23 @@
     },
     {
       "id": "e43c4b29-301c-4d99-8eb9-b3c65d953e32",
-      "finished": false,
+      "finished": true,
       "name": "Use Formik"
     },
     {
       "id": "3afc86a5-7cd8-4f7f-b5d1-5c24bcffa096",
       "finished": false,
       "name": "Implement i18next"
+    },
+    {
+      "id": "3d4g04Vt_9Cdn1j4Vu81H",
+      "finished": true,
+      "name": "Unit test with Jest"
+    },
+    {
+      "id": "9hIY4PS4_2gXG6xX5ofSO",
+      "finished": true,
+      "name": "Git bisect"
     }
   ]
 }

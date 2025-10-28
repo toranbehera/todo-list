@@ -7,8 +7,8 @@ function App() {
   return (
     <div className="flex justify-center">
         <TasksProvider>
-        <CreateTask/>
-        <TasksList/>
+          <CreateTask/>
+          <TasksList/>
       </TasksProvider> 
     </div>
     

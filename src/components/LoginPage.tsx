@@ -1,10 +1,22 @@
 import { useFormik } from "formik";
+import { useAppDispatch } from "../hooks/reduxHooks";
+import { userLoggedIn } from "../app/features/auth/authSlice";
+import { useNavigate } from "react-router";
 
 export default function SignupForm() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: { email: "" },
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      try{
+        const email = values.email;
+        dispatch(userLoggedIn(email));
+        navigate('/');
+      } catch(error: any){
+        alert(JSON.stringify(values, null, 2));
+      }   
     }
   });
   return (

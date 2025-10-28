@@ -1,10 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import type { CaseReducer, PayloadAction, WritableDraft } from "@reduxjs/toolkit"
 import useFetch from "../../../hooks/useFetch"
+import { useAppSelector } from "../../../hooks/reduxHooks"
 
 export interface Task {
     id: string,
     name: string,
+    finished: boolean
+}
+
+export interface TaskUpdate {
+    id: string,
     finished: boolean
 }
 
@@ -28,10 +34,11 @@ export const tasksSlice = createSlice({
             state.tasks.push(action.payload);
         },
         taskUpdated: (state, action: PayloadAction<{id: string, finished: boolean}>) => {
-            const task = state.tasks.find(task => task.id === action.payload.id);
+            const { id, finished } = action.payload;
+            const task = state.tasks.find(task => task.id === id);
             
             if(task){
-             task.finished = action.payload.finished;   
+                task.finished = finished;   
             }
         },
         taskDeleted: (state, action: PayloadAction<string>) => {
